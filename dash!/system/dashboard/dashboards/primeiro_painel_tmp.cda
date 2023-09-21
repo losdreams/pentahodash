@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CDADescriptor>
+   <DataSources>
+      <Connection id="ds_emailxinstitution" type="mondrian.jndi">
+         <Catalog>mondrian:/OutraformaCube</Catalog>
+         <Jndi>OutraformaCube</Jndi>
+      </Connection>
+      <Connection id="ds_Maiorquantidadedemes" type="mondrian.jndi">
+         <Catalog>mondrian:/OutraformaCube</Catalog>
+         <Jndi>OutraformaCube</Jndi>
+      </Connection>
+      <Connection id="ds_paisxemail" type="mondrian.jndi">
+         <Catalog>mondrian:/OutraformaCube</Catalog>
+         <Jndi>OutraformaCube</Jndi>
+      </Connection>
+      <Connection id="ds_quantidadexappp" type="mondrian.jndi">
+         <Catalog>mondrian:/OutraformaCube</Catalog>
+         <Jndi>OutraformaCube</Jndi>
+      </Connection>
+      <Connection id="FiltroAno" type="mondrian.jndi">
+         <Catalog>mondrian:/OutraformaCube</Catalog>
+         <Jndi>OutraformaCube</Jndi>
+      </Connection>
+      <Connection id="FiltroAnoDOIS" type="sql.jndi">
+         <Jndi>StarSchemaBioinfo</Jndi>
+      </Connection>
+   </DataSources>
+   <DataAccess access="public" connection="ds_emailxinstitution" id="ds_emailxinstitution"
+               type="mdx">
+      <Name>ds_emailxinstitution</Name>
+      <BandedMode>compact</BandedMode>
+      <Cache duration="3600" enabled="true"/>
+      <Columns/>
+      <Parameters/>
+      <Query><![CDATA[WITH
+SET [~ROWS_Dim_institution_Dim_institution.Dim_Instutiton] AS
+    {[Dim_institution.Dim_Instutiton].[Name Institution].Members}
+SET [~ROWS_Dim_Usuario_Dim_Usuario.Dim_user] AS
+    {[Dim_Usuario.Dim_user].[E-mail].Members}
+SELECT
+NON EMPTY {[Measures].[Quantidade]} ON COLUMNS,
+NON EMPTY NonEmptyCrossJoin([~ROWS_Dim_institution_Dim_institution.Dim_Instutiton], [~ROWS_Dim_Usuario_Dim_Usuario.Dim_user]) ON ROWS
+FROM [OutraformaCube]]]></Query>
+   </DataAccess>
+   <DataAccess access="public" connection="ds_Maiorquantidadedemes"
+               id="ds_Maiorquantidadedemes"
+               type="mdx">
+      <Name>ds_Maiorquantidadedemes</Name>
+      <BandedMode>compact</BandedMode>
+      <Cache duration="3600" enabled="true"/>
+      <Columns/>
+      <Parameters/>
+      <Query><![CDATA[WITH
+SET [~ROWS] AS
+    {[Dim_Tempo.Mes].[Mes].Members}
+SELECT
+NON EMPTY {[Measures].[Quantidade]} ON COLUMNS,
+NON EMPTY [~ROWS] ON ROWS
+FROM [OutraformaCube]]]></Query>
+   </DataAccess>
+   <DataAccess access="public" connection="ds_paisxemail" id="ds_paisxemail" type="mdx">
+      <Name>ds_paisxemail</Name>
+      <BandedMode>compact</BandedMode>
+      <Cache duration="3600" enabled="true"/>
+      <Columns/>
+      <Parameters/>
+      <Query><![CDATA[WITH
+SET [~COLUMNS] AS
+    {[Dim_Usuario.Dim_user].[E-mail].Members}
+SET [~ROWS] AS
+    {[Dim_Country].[Name].Members}
+SELECT
+NON EMPTY [~COLUMNS] ON COLUMNS,
+NON EMPTY [~ROWS] ON ROWS
+FROM [OutraformaCube]]]></Query>
+   </DataAccess>
+   <DataAccess access="public" connection="ds_quantidadexappp" id="ds_quantidadexappp"
+               type="mdx">
+      <Name>ds_quantidadexappp</Name>
+      <BandedMode>compact</BandedMode>
+      <Cache duration="3600" enabled="true"/>
+      <Columns/>
+      <Parameters>
+         <Parameter default="ANO" name="ANO" type="String"/>
+      </Parameters>
+      <Query><![CDATA[WITH
+SET [~FILTER] AS
+    {[Dim_Tempo.Ano].[${ANO}]}
+SET [~ROWS] AS
+    {[Dim_application.Name_Application].[Name Application].Members}
+SELECT
+NON EMPTY {[Measures].[Quantidade]} ON COLUMNS,
+NON EMPTY [~ROWS] ON ROWS
+FROM [OutraformaCube]
+WHERE [~FILTER]]]></Query>
+   </DataAccess>
+   <DataAccess access="public" connection="FiltroAno" id="FiltroAno" type="mdx">
+      <Name>FiltroAno</Name>
+      <BandedMode>compact</BandedMode>
+      <Cache duration="3600" enabled="true"/>
+      <Columns/>
+      <Parameters/>
+      <Query><![CDATA[WITH
+SET [~ROWS] AS
+    {[Dim_Tempo.Ano].[Ano].Members}
+SELECT
+NON EMPTY {[Measures].[Quantidade]} ON COLUMNS,
+NON EMPTY [~ROWS] ON ROWS
+FROM [OutraformaCube]]]></Query>
+   </DataAccess>
+   <DataAccess access="public" connection="FiltroAnoDOIS" id="FiltroAnoDOIS" type="sql">
+      <Name>FiltroAnoDOIS</Name>
+      <Cache duration="3600" enabled="true"/>
+      <Columns/>
+      <Parameters/>
+      <Query><![CDATA[WITH
+SET [~ROWS] AS
+    {[Dim_Tempo.Ano].[Ano].Members}
+SELECT
+NON EMPTY {[Measures].[Quantidade]} ON COLUMNS,
+NON EMPTY [~ROWS] ON ROWS
+FROM [OutraformaCube]]]></Query>
+   </DataAccess>
+</CDADescriptor>
